@@ -1,0 +1,9 @@
+{
+  "name": "bank-community-backend",
+  "version": "1.0.0",
+  "description": "Backend for Bank Community Loan app",
+  "dependencies": {
+    "firebase-admin": "^12.1.1"
+  }
+}
+
