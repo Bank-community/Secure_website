@@ -9,6 +9,7 @@
     <!-- Feather Icons Script -->
     <script src="https://unpkg.com/feather-icons"></script>
     
+    <!-- Firebase SDKs have been REMOVED for security -->
 
     <style>
     /* --- General Styles --- */
@@ -518,22 +519,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- Firebase Configuration ---
-    
-    async function connectToBackend() {
-  try {
-    const response = await fetch('/api/backend');
-    const data = await response.json();
-    console.log(data.message || data.error);
-  } catch (error) {
-    console.error("कनेक्शन में समस्या:", error);
-  }
-}
-connectToBackend();
-
-    
-
-    
+    // --- Firebase Configuration has been REMOVED ---
 
     const DEFAULT_IMAGE = 'https://i.imgur.com/6aATcZR.jpeg';
     const PRIME_MEMBERS = ["Prince rama", "Amit kumar", "Mithlesh sahni"];
@@ -590,7 +576,8 @@ connectToBackend();
         bankStats: null
     };
     
-    const formatDate = (date) => {
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
         if (!(date instanceof Date) || isNaN(date)) return "N/A";
         return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
     };
@@ -599,17 +586,34 @@ connectToBackend();
         const profit = paymentRecord.ReturnAmount;
         if (profit <= 0) return null;
         const payerName = paymentRecord.Name;
-        const userLoansBeforePayment = allData.filter(r => r.Name === payerName && r.Loan > 0 && (r.Date < paymentRecord.Date || (r.Date.getTime() === paymentRecord.Date.getTime() && r.id < paymentRecord.id)));
+        const paymentDate = new Date(paymentRecord.Date);
+        
+        const userLoansBeforePayment = allData.filter(r => 
+            r.Name === payerName && 
+            r.Loan > 0 && 
+            (new Date(r.Date) < paymentDate || (new Date(r.Date).getTime() === paymentDate.getTime() && r.id < paymentRecord.id))
+        );
+        
         if (userLoansBeforePayment.length === 0) return null;
+        
         const relevantLoan = userLoansBeforePayment[userLoansBeforePayment.length - 1];
-        const loanDate = relevantLoan.Date;
+        const loanDate = new Date(relevantLoan.Date);
         const loanId = relevantLoan.id;
-        const transactionsBeforeLoan = allData.filter(r => r.Date < loanDate || (r.Date.getTime() === loanDate.getTime() && r.id < loanId));
+
+        const transactionsBeforeLoan = allData.filter(r => {
+            const rDate = new Date(r.Date);
+            return rDate < loanDate || (rDate.getTime() === loanDate.getTime() && r.id < loanId);
+        });
+
         const memberBalances = {};
-        transactionsBeforeLoan.forEach(r => { memberBalances[r.Name] = (memberBalances[r.Name] || 0) + r.SipPayment + r.Payment - r.Loan; });
+        transactionsBeforeLoan.forEach(r => { 
+            memberBalances[r.Name] = (memberBalances[r.Name] || 0) + r.SipPayment + r.Payment - r.Loan; 
+        });
+
         const capitalProviders = Object.entries(memberBalances).filter(([_, balance]) => balance > 0);
         const totalCommunityCapital = capitalProviders.reduce((sum, [, balance]) => sum + balance, 0);
         if (totalCommunityCapital <= 0) return null;
+        
         const distribution = capitalProviders.map(([name, balance]) => ({ name, share: (balance / totalCommunityCapital) * profit }));
         return { distribution };
     }
@@ -628,41 +632,32 @@ connectToBackend();
         return totalProfit;
     }
 
-    function fetchMemberDataFromFirebase() {
+    // --- UPDATED: This function now calls our Vercel API ---
+    async function fetchMemberDataFromBackend() {
         if (!memberContainer) return;
         memberContainer.innerHTML = '<p class="loading-text">Sadasya data load ho raha hai...</p>';
-        const membersRef = database.ref('members');
-        membersRef.once('value', (snapshot) => {
-            const membersData = snapshot.val();
-            const transactions = [];
-            if (membersData) {
-                for (const memberKey in membersData) {
-                    const member = membersData[memberKey];
-                    if (member.transactions) {
-                        for (const transactionId in member.transactions) {
-                            const tx = member.transactions[transactionId];
-                            const formattedTransaction = {
-                                id: transactions.length, Date: new Date(tx.Date), Name: member.name || memberKey,
-                                Loan: parseFloat(tx.Loan) || 0, Payment: parseFloat(tx["Loan Payment"]) || 0,
-                                SipPayment: parseFloat(tx["SIP Payment"]) || 0,
-                                ReturnAmount: parseFloat(tx["Return amount"] || tx["Return amount "]) || 0,
-                                ImageUrl: tx.imageUrl || null
-                            };
-                            if (formattedTransaction.Name && !isNaN(formattedTransaction.Date.getTime())) {
-                                transactions.push(formattedTransaction);
-                            }
-                        }
-                    }
-                }
+        
+        try {
+            // Calling our secure Vercel API endpoint
+            const response = await fetch('/api/getMembers');
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Network response was not ok');
             }
-            allTransactions = transactions.sort((a, b) => a.Date - b.Date || a.id - b.id);
+            
+            const data = await response.json();
+            
+            // The data received from the backend is already sorted
+            allTransactions = data.transactions;
             processAndDisplayData(allTransactions);
-        }, (error) => {
-            console.error('Firebase Read Failed:', error);
+
+        } catch (error) {
+            console.error('Backend Fetch Failed:', error);
             if (memberContainer) {
                memberContainer.innerHTML = `<p class="error-text">❌ Sadasya data load karne mein vifal.<br><small>${error.message}</small><br>Kripya baad mein prayas karein.</p>`;
             }
-        });
+        }
     }
 
     function processAndDisplayData(data) {
@@ -689,7 +684,11 @@ connectToBackend();
             const totalSIP = memberData.reduce((sum, r) => sum + r.SipPayment, 0);
             const lastEntryWithImage = [...memberData].reverse().find(r => r.ImageUrl);
             const isPrime = PRIME_MEMBERS.some(p => p.trim().toLowerCase() === name.trim().toLowerCase());
-            const currentMonthSip = memberData.find(r => r.SipPayment > 0 && r.Date.getMonth() === currentMonth && r.Date.getFullYear() === currentYear);
+            const currentMonthSip = memberData.find(r => {
+                const rDate = new Date(r.Date);
+                return r.SipPayment > 0 && rDate.getMonth() === currentMonth && rDate.getFullYear() === currentYear
+            });
+
             members[name] = {
                 name: name, balance: (totalSIP + totalPayment) - totalLoan,
                 totalReturn: calculateTotalProfitForMember(name, data),
@@ -708,7 +707,11 @@ connectToBackend();
         adData.topBalanceMember = memberList.length > 0 ? memberList[0] : null;
         adData.topThreeMembers = memberList.slice(0, 3);
         adData.bankStats = { totalMembers: memberList.length, totalLoan: totalLoanDisbursed };
-        const currentMonthSips = data.filter(tx => tx.SipPayment > 0 && tx.Date.getMonth() === currentMonth && tx.Date.getFullYear() === currentYear);
+        const currentMonthSips = data.filter(tx => {
+            const txDate = new Date(tx.Date);
+            return tx.SipPayment > 0 && txDate.getMonth() === currentMonth && txDate.getFullYear() === currentYear;
+        });
+
         if (currentMonthSips.length > 0) {
             const topSipTx = currentMonthSips.reduce((max, tx) => tx.SipPayment > max.SipPayment ? tx : max, currentMonthSips[0]);
             const topSipMemberInfo = memberList.find(m => m.name === topSipTx.Name);
@@ -941,7 +944,8 @@ connectToBackend();
     // --- Initial Calls ---
     feather.replace();
     setupEventListeners();
-    fetchMemberDataFromFirebase();
+    // The old function call is replaced with the new one
+    fetchMemberDataFromBackend();
     initializeLetterSlider();
     observeElements(document.querySelectorAll('.animate-on-scroll'));
 });
@@ -949,6 +953,4 @@ connectToBackend();
 
 </body>
 </html>
-
-
 
