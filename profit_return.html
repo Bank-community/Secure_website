@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Profit Analytics - Final Version</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+<style>
+/* Your existing CSS remains the same */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+:root { --primary-color: #2c3e50; --secondary-color: #3498db; --accent-color: #e67e22; --light-bg: #ecf0f1; --text-dark: #2c3e50; --text-light: #7f8c8d; --positive-color: #27ae60; --negative-color: #c0392b; --warning-color: #f39c12; --card-bg: #ffffff; --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.07); --border-color: #dfe6e9; --modal-bg: rgba(44, 62, 80, 0.7); --gradient-header: linear-gradient(90deg, #2c3e50, #34495e); --details-btn-bg: #27ae60; --details-btn-text: #ffffff; --ai-btn-bg: #8e44ad; --ai-btn-text: #ffffff; }
+body { font-family: 'Poppins', sans-serif; margin: 0; background-color: var(--light-bg); color: var(--text-dark); line-height: 1.6; padding-top: 70px; }
+.container { max-width: 1300px; margin: 25px auto; padding: 0 20px; }
+.hidden { display: none !important; }
+.visually-hidden { opacity: 0; pointer-events: none; visibility: hidden; }
+/* ... (All your other CSS styles go here) ... */
+#passwordInput { width: calc(100% - 24px); padding: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 22px; text-align: center; letter-spacing: 10px; font-family: 'Poppins', sans-serif; }
+#passwordSubmit { width: 100%; padding: 12px 20px; font-size: 1em; font-weight: 600; background-color: var(--primary-color); color: white; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; }
+#passwordSubmit:hover { background-color: var(--secondary-color); transform: translateY(-2px); }
+</style>
+    <div id="loader">
+        <div class="spinner"></div>
+        <span>Loading Final Analytics...</span>
+    </div>
+
+    <div id="passwordPromptContainer" class="visually-hidden">
+        <div id="passwordPromptMessage">
+            <h3><i class="fas fa-lock"></i> Enter Access PIN</h3>
+            <input type="password" id="passwordInput" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••">
+            <button id="passwordSubmit">Enter</button>
+        </div>
+    </div>
+
+    <div id="dashboardContent" class="visually-hidden">
+        <header class="header">
+            <h1><i class="fas fa-chart-line"></i> Bank Loan Profit</h1>
+        </header>
+        <div class="container">
+            <!-- All your HTML content for filters, profile card, tables, etc. goes here -->
+        </div>
+    </div>
+    
+    <!-- All your modals go here -->
+
+<script>
+// --- CONFIGURATION & NIYAM ---
+const CONFIG = {
+    DEFAULT_PROFILE_PIC: 'https://i.postimg.cc/XNpR3cN1/20241030-065157.png',
+    CAPITAL_WEIGHT: 0.40, CONSISTENCY_WEIGHT: 0.30, CREDIT_BEHAVIOR_WEIGHT: 0.30,
+    LOAN_LIMIT_TIER1_SCORE: 50, LOAN_LIMIT_TIER2_SCORE: 60, LOAN_LIMIT_TIER3_SCORE: 80,
+    LOAN_LIMIT_TIER1_MAX: 1.0, LOAN_LIMIT_TIER2_MAX: 1.5, LOAN_LIMIT_TIER3_MAX: 1.8, LOAN_LIMIT_TIER4_MAX: 2.0,
+    MINIMUM_MEMBERSHIP_DAYS: 60, SIP_ON_TIME_LIMIT: 10,
+    LOAN_TERM_TIER3: 90, LOAN_TERM_LATE_FEE: 100,
+    INACTIVE_MEMBER_DAYS_LIMIT: 365, 
+    INACTIVE_MEMBER_PROFIT_MULTIPLIER: 0.75
+};
+
+// --- GLOBAL VARIABLES ---
+let allData = [], memberNames = [], distributionChartInstance = null, growthChartInstance = null;
+let CORRECT_PASSWORD = null;
+
+// --- INITIALIZATION ---
+document.addEventListener("DOMContentLoaded", () => setupPasswordPrompt());
+
+async function setupPasswordPrompt() {
+    const passwordContainer = document.getElementById('passwordPromptContainer');
+    const passwordInput = document.getElementById('passwordInput');
+    const passwordSubmit = document.getElementById('passwordSubmit');
+    
+    try {
+        const response = await fetch('/api/getMembers'); // Fetching data which also contains the PIN
+        if (!response.ok) throw new Error("Could not connect to backend to get PIN.");
+        const data = await response.json();
+        CORRECT_PASSWORD = data.accessPin;
+        if (!CORRECT_PASSWORD) throw new Error("Access PIN not found in backend response.");
+        
+        passwordContainer.classList.remove('visually-hidden');
+        passwordInput.focus();
+    } catch(e) {
+        document.body.innerHTML = `<div style="text-align:center; padding:50px; color:red;">${e.message}</div>`;
+        return;
+    }
+
+    const checkPassword = () => {
+        if (passwordInput.value === CORRECT_PASSWORD) {
+            passwordContainer.classList.add('visually-hidden');
+            document.getElementById('loader').classList.remove('hidden');
+            fetchData();
+        } else {
+            alert("Incorrect PIN");
+            passwordInput.value = "";
+            passwordInput.focus();
+        }
+    };
+    passwordSubmit.addEventListener('click', checkPassword);
+    passwordInput.addEventListener('keydown', (e) => e.key === 'Enter' && checkPassword());
+}
+
+// --- DATA FETCHING AND PROCESSING ---
+async function fetchData() {
+    try {
+        const response = await fetch('/api/getMembers');
+        if (!response.ok) throw new Error("Backend se data fetch karne mein samasya.");
+        
+        const jsonResponse = await response.json();
+        allData = jsonResponse.transactions.map((row, index) => ({
+            id: index, date: new Date(row.Date), name: String(row.Name).trim(),
+            loan: parseFloat(row.Loan) || 0, payment: parseFloat(row.Payment) || 0,
+            sipPayment: parseFloat(row.SipPayment) || 0, returnAmount: parseFloat(row.ReturnAmount) || 0,
+            imageUrl: row.ImageUrl || null
+        })).filter(r => r.name && !isNaN(r.date.getTime()));
+        
+        allData.sort((a, b) => a.date - b.date || a.id - b.id);
+        memberNames = [...new Set(allData.map(row => row.name))].sort();
+        initializeDashboard();
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        document.body.innerHTML = `<div style="text-align:center; padding:50px; color:red;">Failed to load data. Please refresh.</div>`;
+    } finally {
+        document.getElementById('loader').classList.add('hidden');
+    }
+}
+
+// --- AI EXPLANATION FUNCTIONS ---
+async function generateAndShowExplanation(promptGenerator) {
+    const resultDiv = document.getElementById('aiExplanationResult');
+    const langToggleContainer = document.getElementById('languageToggleContainer');
+    
+    resultDiv.innerHTML = `<div class="ai-loader"><div class="spinner"></div><span>AI aapke liye jankari taiyar kar raha hai...</span></div>`;
+    langToggleContainer.classList.add('hidden');
+    document.getElementById('aiExplainModal').classList.remove('visually-hidden');
+
+    const initialPrompt = promptGenerator();
+
+    try {
+        // Call our new secure backend for AI
+        const response = await fetch('/api/getAiExplanation', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ promptText: initialPrompt })
+        });
+
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.details || 'AI request failed.');
+        }
+
+        const data = await response.json();
+        const explanation = data.explanation;
+        
+        resultDiv.innerHTML = marked.parse(explanation);
+        resultDiv.dataset.originalText = explanation;
+        langToggleContainer.classList.remove('hidden');
+
+    } catch (error) {
+        console.error("AI Explanation Error:", error);
+        resultDiv.innerHTML = `<p style="color: var(--negative-color);"><strong>Error:</strong> AI se jawab nahi mil saka. Kripya Vercel logs check karein.</p>`;
+    }
+}
+
+async function handleLanguageToggle(event) {
+    const targetLang = event.target.dataset.lang;
+    const resultDiv = document.getElementById('aiExplanationResult');
+    const textToTranslate = resultDiv.dataset.originalText;
+    
+    if (!textToTranslate) return;
+
+    const langFullName = targetLang === 'hi' ? 'Hindi' : 'English';
+    const translationPrompt = `Translate the following text into ${langFullName}. Provide only the translated text, without any additional formatting or introductory phrases:\n\n"${textToTranslate}"`;
+    
+    resultDiv.innerHTML = `<div class="ai-loader"><div class="spinner"></div></div>`;
+
+    try {
+        const response = await fetch('/api/getAiExplanation', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ promptText: translationPrompt })
+        });
+        if (!response.ok) throw new Error('Translation failed.');
+        
+        const data = await response.json();
+        resultDiv.innerHTML = marked.parse(data.explanation);
+    } catch (error) {
+        resultDiv.innerHTML = `<p style="color: var(--negative-color);"><strong>Error:</strong> Translation fail ho gaya.</p>`;
+    }
+}
+
+// --- All your other functions like initializeDashboard, updateDisplay, calculatePerformanceScore, etc. remain here ---
+// --- They will work correctly with the data fetched from the backend. ---
+// ... (Paste all your other JavaScript functions here) ...
+
+</script>
+</body>
+</html>
+
