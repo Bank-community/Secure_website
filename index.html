@@ -716,9 +716,8 @@ document.addEventListener('DOMContentLoaded', () => {
         allMembersData = memberList; 
 
         // Populate adData
-        
-        adData.topThreeMembers = memberList.slice(0, 3);
         adData.topBalanceMember = memberList.length > 0 ? memberList[0] : null;
+        adData.topThreeMembers = memberList.slice(0, 3);
         adData.bankStats = { totalMembers: memberList.length, totalLoan: totalLoanDisbursed };
         const currentMonthSips = data.filter(tx => tx.SipPayment > 0 && tx.Date.getMonth() === currentMonth && tx.Date.getFullYear() === currentYear);
         if (currentMonthSips.length > 0) {
@@ -863,7 +862,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!headerDisplay) return;
         const ads = [];
         
-        if (adData.topThreeMembers.length >= 3) { ads.push(() => { let topThreeHtml = adData.topThreeMembers.map(member => `<div class="ad-top-three-member"><img src="${member.displayImageUrl}" class="ad-top-three-img" alt="${member.name}" onerror="this.onerror=null; this.src='${DEFAULT_IMAGE}';"><p class="ad-top-three-name">${member.name}</p><p class="ad-top-three-amount">${member.balance.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}</p></div>`).join(''); return `<div class="ad-content"><div class="ad-headline">🚀 Top 3 Wealth Creators 🚀</div><div class="ad-top-three-container">${topThreeHtml}</div></div>`; });  
+        
+
+        if (adData.topThreeMembers.length >= 3) { ads.push(() => { let topThreeHtml = adData.topThreeMembers.map(member => `<div class="ad-top-three-member"><img src="${member.displayImageUrl}" class="ad-top-three-img" alt="${member.name}" onerror="this.onerror=null; this.src='${DEFAULT_IMAGE}';"><p class="ad-top-three-name">${member.name}</p><p class="ad-top-three-amount">${member.balance.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}</p></div>`).join(''); return `<div class="ad-content"><div class="ad-headline">🚀 Top 3 Wealth Creators 🚀</div><div class="ad-top-three-container">${topThreeHtml}</div></div>`; }); } 
         if (adData.topSipMember) { ads.push(() => `<div class="ad-content"><div class="ad-headline">🏆 Member of the SIP Month 🏆</div><div class="ad-member-info"><img src="${adData.topSipMember.imageUrl}" class="ad-member-img" alt="${adData.topSipMember.name}" onerror="this.onerror=null; this.src='${DEFAULT_IMAGE}';"><div class="ad-member-details"><p class="ad-member-name">${adData.topSipMember.name}</p><p class="ad-member-amount">${adData.topSipMember.amount.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</p></div></div></div>`); }
         if (adData.topBalanceMember) { ads.push(() => `<div class="ad-content"><div class="ad-headline">✨ Our Top Community Member ✨</div><div class="ad-member-info"><img src="${adData.topBalanceMember.displayImageUrl}" class="ad-member-img" alt="${adData.topBalanceMember.name}" onerror="this.onerror=null; this.src='${DEFAULT_IMAGE}';"><div class="ad-member-details"><p class="ad-member-name">${adData.topBalanceMember.name}</p><p class="ad-member-amount">${adData.topBalanceMember.balance.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</p></div></div></div>`); }
         if (adData.bankStats) { ads.push(() => `<div class="ad-content"><div class="ad-bank-stats-container"><img src="${BANK_LOGO_URL}" alt="Bank Logo" class="ad-bank-logo"><ul class="ad-bank-stats"><li>Established: <strong>23 June 2024</strong></li><li>Total Members: <strong>${adData.bankStats.totalMembers}</strong></li><li>Loan Disbursed: <strong>${adData.bankStats.totalLoan.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</strong></li></ul></div></div>`); }
