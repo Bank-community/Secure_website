@@ -100,22 +100,24 @@
     }
     
     /* The ad content will act as the screen */
-    .ad-content {
-        background-color: #000;
-        border-radius: 10px; /* Inner screen roundness */
-        width: 100%;
-        height: 100%;
-        position: relative;
-        overflow: hidden;
-        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.75);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 10px;
-        box-sizing: border-box;
-        animation: fadeIn 0.8s ease-in-out;
-    }
+    /* Yeh code bhi zaroor update karein */
+.ad-content {
+    background-color: #000;
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.75);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly; /* UPDATED: Isse vertical alignment theek hoga */
+    padding: 10px;
+    box-sizing: border-box;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
     
     /* Scan Lines Effect */
     .ad-content::before {
@@ -149,7 +151,7 @@
         font-size: 1em;
         font-weight: 600;
         color: #e5e5e5; /* Light color */
-        margin-bottom: 10px;
+        margin-bottom: 5px; /* UPDATED: Margin kam kiya gaya */
         z-index: 2;
         position: relative;
     }
@@ -164,7 +166,10 @@
         flex-wrap: wrap;
         width: 100%;
     }
-    .ad-top-three-container { justify-content: space-around; align-items: flex-start; }
+    .ad-top-three-container { 
+        justify-content: space-around; 
+        align-items: flex-start; 
+    }
     
     .ad-member-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid #4b5563; }
     .ad-member-details { text-align: left; }
@@ -173,8 +178,20 @@
     
     .ad-top-three-member { text-align: center; flex: 1; }
     .ad-top-three-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; margin: 0 auto 5px; border: 2px solid #4b5563; }
-    .ad-top-three-name { font-size: 0.85em; font-weight: 600; line-height: 1.2; color: #d1d5db; }
-    .ad-top-three-amount { font-size: 0.8em; color: #34d399; }
+    
+    /* UPDATED: Name aur Amount ke beech ka space theek kiya gaya */
+    .ad-top-three-name { 
+        font-size: 0.85em; 
+        font-weight: 600; 
+        line-height: 1.2; 
+        color: #d1d5db; 
+        margin: 0 0 4px 0; /* Default margin hatakar naya margin diya gaya */
+    }
+    .ad-top-three-amount { 
+        font-size: 0.8em; 
+        color: #34d399; 
+        margin: 0; /* Default margin hataya gaya */
+    }
 
     .ad-bank-logo { width: 70px; height: 70px; }
     .ad-bank-stats { list-style: none; padding: 0; margin: 0; text-align: left; }
