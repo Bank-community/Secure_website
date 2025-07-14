@@ -1,0 +1,21 @@
+{
+  "short_name": "Bank Loan",
+  "name": "Bank Community Loan",
+  "icons": [
+    {
+      "src": "https://i.ibb.co/QFyppct1/1000005314.jpg",
+      "type": "image/jpeg",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://i.ibb.co/QFyppct1/1000005314.jpg",
+      "type": "image/jpeg",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f8f9fa",
+  "theme_color": "#007bff"
+}
+
