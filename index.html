@@ -10,8 +10,8 @@
     <meta name="theme-color" content="#007bff">
 
     <!-- UPDATED: New Logo for Favicon and Apple Touch Icon -->
-    <link rel="shortcut icon" href="https://i.ibb.co/6c5yJVhN/20250714-174036.png" type="image/x-icon">
-    <link rel="apple-touch-icon" href="https://i.ibb.co/6c5yJVhN/20250714-174036.png" sizes="180x180">
+    <link rel="shortcut icon" href="https://i.ibb.co/QFyppct1/1000005314.jpg" type="image/x-icon">
+    <link rel="apple-touch-icon" href="https://i.ibb.co/QFyppct1/1000005314.jpg" sizes="180x180">
     
     <!-- Feather Icons Script -->
     <script src="https://unpkg.com/feather-icons"></script>
@@ -251,17 +251,14 @@
         color: var(--text-color);
     }
     
-    /* UPDATED: Install Button Style */
+    /* NEW: Install Button Style */
     #installAppBtn {
         background: var(--success-color);
         color: white;
         display: none; /* Hidden by default, shown by JS */
-        font-weight: 700; /* BOLD TEXT */
-        border: 2px solid white; /* WHITE BORDER */
     }
     #installAppBtn:hover {
         background: #218838;
-        border-color: #eee;
     }
 
 
@@ -613,7 +610,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const DEFAULT_IMAGE = 'https://i.imgur.com/6aATcZR.jpeg';
     const PRIME_MEMBERS = ["Prince rama", "Amit kumar", "Mithlesh sahni"];
     // UPDATED: New Bank Logo URL
-    const BANK_LOGO_URL = 'https://i.ibb.co/6c5yJVhN/20250714-174036.png';
+    const BANK_LOGO_URL = 'https://i.ibb.co/QFyppct1/1000005314.jpg';
 
     // DOM Elements
     const memberContainer = document.getElementById('memberContainer');
@@ -682,7 +679,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         if (isNaN(date.getTime())) return "N/A";
-        return date.toLocaleDate'en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+        return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
     };
 
     // --- NEW: This function calls our Vercel API ---
