@@ -716,8 +716,9 @@ document.addEventListener('DOMContentLoaded', () => {
         allMembersData = memberList; 
 
         // Populate adData
-        adData.topBalanceMember = memberList.length > 0 ? memberList[0] : null;
+        
         adData.topThreeMembers = memberList.slice(0, 3);
+        adData.topBalanceMember = memberList.length > 0 ? memberList[0] : null;
         adData.bankStats = { totalMembers: memberList.length, totalLoan: totalLoanDisbursed };
         const currentMonthSips = data.filter(tx => tx.SipPayment > 0 && tx.Date.getMonth() === currentMonth && tx.Date.getFullYear() === currentYear);
         if (currentMonthSips.length > 0) {
