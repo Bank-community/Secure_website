@@ -183,7 +183,7 @@ td { font-size: 0.95em; }
         <span>Loading Final Analytics...</span>
     </div>
 
-    <div id="passwordPromptContainer" class="visually-hidden">
+    <div id="passwordPromptContainer">
         <div id="passwordPromptMessage">
             <h3><i class="fas fa-lock"></i> Enter Access PIN</h3>
             <input type="password" id="passwordInput" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••">
@@ -366,6 +366,7 @@ td { font-size: 0.95em; }
 <script>
 // --- CONFIGURATION & NIYAM ---
 const CONFIG = {
+    // DATA_URL and PASSWORD are now handled by the backend
     DEFAULT_PROFILE_PIC: 'https://i.postimg.cc/XNpR3cN1/20241030-065157.png',
     CAPITAL_WEIGHT: 0.40, CONSISTENCY_WEIGHT: 0.30, CREDIT_BEHAVIOR_WEIGHT: 0.30,
     LOAN_LIMIT_TIER1_SCORE: 50, LOAN_LIMIT_TIER2_SCORE: 60, LOAN_LIMIT_TIER3_SCORE: 80,
@@ -389,6 +390,7 @@ async function setupPasswordPrompt() {
     const passwordSubmit = document.getElementById('passwordSubmit');
     
     try {
+        // Fetch the PIN from the backend
         const response = await fetch('/api/getMembers');
         if (!response.ok) throw new Error("Could not connect to backend to get PIN.");
         const data = await response.json();
