@@ -5,17 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BANK</title>
     
-    <!-- NEW: PWA Manifest and Theme Color -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#007bff">
 
-    <!-- UPDATED: New Logo for Favicon and Apple Touch Icon -->
     <link rel="shortcut icon" href="https://i.ibb.co/0Vnz4qPn/20250714-183208.png" type="image/x-icon">
     <link rel="apple-touch-icon" href="https://i.ibb.co/6c5yJVhN/20250714-174036.png" sizes="180x180">
     
-    <!-- Feather Icons Script -->
     <script src="https://unpkg.com/feather-icons"></script>
-    <!-- Chart.js for SIP Chart -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
@@ -37,7 +33,6 @@
         --info-color: #17a2b8;
         --animation-duration: 0.6s;
         
-        /* --- Premium Colors --- */
         --gold-color: #ffd700;
         --gold-gradient: linear-gradient(145deg, #ffde59, #ffc107);
         --silver-color: #c0c0c0;
@@ -90,34 +85,58 @@
         border-bottom: 5px solid var(--prime-color);
     }
 
-    /* --- ENHANCED: Header Display --- */
+    /* --- NEW REALISTIC DISPLAY STYLES --- */
     .header-display {
         width: 100%;
         max-width: 500px;
-        height: 180px; /* Fixed height for consistency */
+        height: 180px; /* Fixed height as requested */
         margin: 0 auto 15px auto;
-        padding: 15px 20px;
+        padding: 12px; /* Bezel thickness */
         box-sizing: border-box;
-        overflow: hidden;
-        border-radius: 12px;
-        box-shadow: inset 0 0 15px rgba(0,0,0,0.1), 0 4px 15px rgba(0,0,0,0.2);
-        background: #f5f7fa;
-        color: #333;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        border-radius: 20px; /* Outer roundness */
+        background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(0, 0, 0, 0.6);
         position: relative;
     }
-
+    
+    /* The ad content will act as the screen */
     .ad-content {
+        background-color: #000;
+        border-radius: 10px; /* Inner screen roundness */
         width: 100%;
         height: 100%;
+        position: relative;
+        overflow: hidden;
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.75);
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        text-align: center;
+        padding: 10px;
+        box-sizing: border-box;
         animation: fadeIn 0.8s ease-in-out;
+    }
+    
+    /* Scan Lines Effect */
+    .ad-content::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.02) 2px, rgba(255, 255, 255, 0.02) 4px);
+        opacity: 0.5;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    /* Glare Effect */
+    .ad-content::after {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.12), transparent 70%);
+        border-radius: 10px;
+        pointer-events: none;
+        z-index: 3; /* Above content and scan lines */
     }
     
     @keyframes fadeIn {
@@ -125,45 +144,59 @@
         to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Text color changes for dark background */
     .ad-headline {
         font-size: 1em;
         font-weight: 600;
-        color: var(--primary-darker);
+        color: #e5e5e5; /* Light color */
         margin-bottom: 10px;
+        z-index: 2;
+        position: relative;
     }
 
-    .ad-member-info { display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap; }
-    .ad-member-img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-color); }
-    .ad-member-details { text-align: left; }
-    .ad-member-name { font-size: 1.3em; font-weight: 700; margin: 0; color: var(--text-color); }
-    .ad-member-amount { font-size: 1.1em; font-weight: 500; color: var(--success-color); margin: 5px 0 0 0; }
+    .ad-member-info, .ad-top-three-container, .ad-bank-stats-container { 
+        z-index: 2; 
+        position: relative;
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        gap: 15px; 
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    .ad-top-three-container { justify-content: space-around; align-items: flex-start; }
     
-    .ad-top-three-container { display: flex; justify-content: space-around; align-items: flex-start; width: 100%; }
+    .ad-member-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid #4b5563; }
+    .ad-member-details { text-align: left; }
+    .ad-member-name { font-size: 1.3em; font-weight: 700; margin: 0; color: #f0f0f0; }
+    .ad-member-amount { font-size: 1.1em; font-weight: 500; color: #34d399; margin: 5px 0 0 0; text-shadow: 0 0 8px rgba(52, 211, 153, 0.5); }
+    
     .ad-top-three-member { text-align: center; flex: 1; }
-    .ad-top-three-img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin: 0 auto 5px; border: 2px solid var(--border-color); }
-    .ad-top-three-name { font-size: 0.85em; font-weight: 600; line-height: 1.2; }
-    .ad-top-three-amount { font-size: 0.8em; color: var(--success-color); }
+    .ad-top-three-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; margin: 0 auto 5px; border: 2px solid #4b5563; }
+    .ad-top-three-name { font-size: 0.85em; font-weight: 600; line-height: 1.2; color: #d1d5db; }
+    .ad-top-three-amount { font-size: 0.8em; color: #34d399; }
 
-    .ad-bank-stats-container { display: flex; align-items: center; justify-content: center; gap: 20px; }
-    .ad-bank-logo { width: 80px; height: 80px; }
+    .ad-bank-logo { width: 70px; height: 70px; }
     .ad-bank-stats { list-style: none; padding: 0; margin: 0; text-align: left; }
-    .ad-bank-stats li { font-size: 1.1em; font-weight: 500; margin-bottom: 5px; }
-    .ad-bank-stats li strong { color: var(--primary-darker); }
+    .ad-bank-stats li { font-size: 1em; font-weight: 500; margin-bottom: 5px; color: #d1d5db;}
+    .ad-bank-stats li strong { color: #93c5fd; } /* Light blue for highlight */
 
     .ad-progress-bar {
         position: absolute;
         bottom: 0;
         left: 0;
         height: 4px;
-        background: var(--danger-color); /* Updated to red */
+        background: var(--danger-color);
         width: 0;
-        border-radius: 0 0 0 4px;
-        animation: progress-anim 5s linear forwards; /* Updated to 5s */
+        border-radius: 0 0 10px 10px; /* Match inner screen radius */
+        animation: progress-anim 6s linear forwards;
+        z-index: 4; /* On top of everything */
     }
     @keyframes progress-anim {
         from { width: 0%; }
         to { width: 100%; }
     }
+    /* --- END OF NEW DISPLAY STYLES --- */
 
     header h1 {
         color: white;
@@ -180,12 +213,11 @@
         font-size: 1em;
     }
 
-    /* --- UPDATED: Header Actions Layout --- */
     .header-actions {
         display: flex;
-        flex-direction: column; /* Stack rows vertically */
+        flex-direction: column;
         align-items: center;
-        gap: 10px; /* Gap between rows */
+        gap: 10px;
         width: 100%;
         padding: 0 15px;
         margin-top: 15px;
@@ -215,18 +247,17 @@
         justify-content: center;
         gap: 8px;
         text-decoration: none;
-        flex-grow: 1; /* Allow buttons to grow */
-        max-width: 180px; /* Max width for buttons */
+        flex-grow: 1;
+        max-width: 180px;
     }
     
-    /* Notification Button Specifics */
     .notification-btn {
         position: relative;
         background: var(--prime-color);
         border: none;
         border-radius: 50px;
         padding: 12px 20px;
-        font-size: 1.5em; /* Larger emoji */
+        font-size: 1.5em;
         cursor: pointer;
         transition: all 0.3s ease;
         color: var(--text-color);
@@ -241,7 +272,7 @@
         background-color: var(--danger-color);
         border-radius: 50%;
         border: 2px solid var(--prime-color);
-        display: none; /* Hidden by default */
+        display: none;
     }
 
     .civil-button:hover, .notification-btn:hover {
@@ -251,24 +282,20 @@
         color: var(--text-color);
     }
     
-#installAppBtn {
-    background: var(--success-color);
-    color: white;
-    display: none; /* यह जावास्क्रिप्ट से कंट्रोल होता है */
-    max-width: 170px; /* बटन की अधिकतम चौड़ाई सेट करता है */
-    font-weight: 700; /* टेक्स्ट को बोल्ड करता है */
-    border: 2px solid white; /* सफेद रंग की बॉर्डर लगाता है */
-}
-
-
-
+    #installAppBtn {
+        background: var(--success-color);
+        color: white;
+        display: none;
+        max-width: 170px;
+        font-weight: 700;
+        border: 2px solid white;
+    }
 
     .content-wrapper { max-width: 1140px; margin: 30px auto; padding: 0 20px; }
     section { margin-bottom: 40px; padding: 25px; background-color: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 15px var(--shadow-color); border: 1px solid var(--border-color); }
     section h2 { margin-top: 0; margin-bottom: 25px; font-size: 1.7em; }
     .transparency-section p { font-size: 1.1em; text-align: center; max-width: 800px; margin-left: auto; margin-right: auto; }
     
-    /* --- NEW: How It Works & Prime Members Slider --- */
     .info-slider-section {
         background: none;
         border: none;
@@ -282,9 +309,9 @@
         scroll-behavior: smooth;
         padding: 20px 25px;
         -webkit-overflow-scrolling: touch;
-        scrollbar-width: none; /* For Firefox */
+        scrollbar-width: none;
     }
-    .info-slider-container::-webkit-scrollbar { display: none; /* For Chrome, Safari */ }
+    .info-slider-container::-webkit-scrollbar { display: none; }
 
     .info-card-slide {
         flex: 0 0 280px;
@@ -420,7 +447,6 @@
     .sip-status-badge.paid { background-color: var(--success-color); }
     .sip-status-badge.not-paid { background-color: var(--danger-color); }
 
-    /* --- NEW: Notification Modal Styles --- */
     #notificationModal .modal-content { max-width: 500px; padding: 0; }
     #notificationModal h2 { padding: 20px 20px 15px 20px; margin: 0; border-bottom: 1px solid var(--border-color); }
     .notification-list { list-style: none; padding: 0; margin: 0; max-height: 65vh; overflow-y: auto; }
@@ -476,7 +502,6 @@
             <button class="civil-button" id="sipStatusBtn">SIP Status</button>
             <button class="notification-btn" id="notificationBtn">🔔<span id="notificationDot" class="notification-dot"></span></button>
         </div>
-        <!-- NEW: Install Button Added -->
         <div class="header-actions-row">
              <button class="civil-button" id="installAppBtn">Install App 📥</button>
         </div>
@@ -610,7 +635,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const DEFAULT_IMAGE = 'https://i.ibb.co/0Vnz4qPn/20250714-183208.png';
     const PRIME_MEMBERS = ["Prince rama", "Amit kumar", "Mithlesh sahni"];
-    // UPDATED: New Bank Logo URL
     const BANK_LOGO_URL = 'https://i.ibb.co/0Vnz4qPn/20250714-183208.png';
 
     // DOM Elements
@@ -663,7 +687,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const playBtn = document.getElementById('playBtn');
     const audio = document.getElementById('welcomeAudio');
     
-    // NEW: Install button element
     const installAppBtn = document.getElementById('installAppBtn');
 
 
@@ -676,14 +699,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let todaysTransactions = [];
     let sipChartInstance = null;
     
-    // This function now expects a date string from the backend
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         if (isNaN(date.getTime())) return "N/A";
         return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
     };
 
-    // --- NEW: This function calls our Vercel API ---
     async function fetchMemberDataFromBackend() {
         if (!memberContainer) return;
         memberContainer.innerHTML = '<p class="loading-text">Sadasya data load ho raha hai...</p>';
@@ -694,7 +715,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(errorData.details || 'Backend se data fetch karne mein samasya.');
             }
             const data = await response.json();
-            allTransactions = data.transactions.map(tx => ({...tx, Date: new Date(tx.Date)})); // Convert date strings to Date objects
+            allTransactions = data.transactions.map(tx => ({...tx, Date: new Date(tx.Date)}));
             processAndDisplayData(allTransactions);
         } catch (error) {
             console.error('Frontend Fetch Failed:', error);
@@ -729,7 +750,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const currentMonthSip = memberData.find(r => r.SipPayment > 0 && r.Date.getMonth() === currentMonth && r.Date.getFullYear() === currentYear);
             members[name] = {
                 name: name, balance: (totalSIP + totalPayment) - totalLoan,
-                totalReturn: 0, // Placeholder
+                totalReturn: 0,
                 loanCount: memberData.filter(r => r.Loan > 0).length,
                 joiningDate: memberData.length > 0 ? memberData[0].Date : null,
                 displayImageUrl: lastEntryWithImage ? lastEntryWithImage.ImageUrl : DEFAULT_IMAGE,
@@ -741,7 +762,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const memberList = Object.values(members).sort((a, b) => b.balance - a.balance);
         allMembersData = memberList; 
 
-        // Populate adData
         adData.topBalanceMember = memberList.length > 0 ? memberList[0] : null;
         adData.topThreeMembers = memberList.slice(0, 3);
         adData.bankStats = { totalMembers: memberList.length, totalLoan: totalLoanDisbursed };
@@ -757,11 +777,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        // Process data for new features
         processTodaysTransactions(data);
         const monthlySipData = processMonthlySipData(data);
 
-        // Render UI
         displayMembers(memberList);
         updateTotalBalanceDisplay(memberList);
         updateInfoCards(memberList.length, totalLoanDisbursed);
@@ -808,7 +826,7 @@ document.addEventListener('DOMContentLoaded', () => {
         profileModalName.textContent = member.name;
         profileModalJoiningDate.textContent = formatDate(member.joiningDate);
         profileModalBalance.textContent = member.balance.toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
-        profileModalReturn.textContent = 'Calculating...'; // Update if needed
+        profileModalReturn.textContent = 'Calculating...';
         profileModalLoanCount.textContent = member.loanCount;
         if (member.sipStatus.paid) { profileModalSipStatus.innerHTML = `<span class="sip-status-icon paid">✔</span><span class="sip-status-text">Paid: ${member.sipStatus.amount.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</span>`; } 
         else { profileModalSipStatus.innerHTML = `<span class="sip-status-icon not-paid">✖</span><span class="sip-status-text">Not Paid</span>`; }
@@ -888,14 +906,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!headerDisplay) return;
         const ads = [];
  
- 
- 
         if (adData.topThreeMembers.length >= 3) { ads.push(() => { let topThreeHtml = adData.topThreeMembers.map(member => `<div class="ad-top-three-member"><img src="${member.displayImageUrl}" class="ad-top-three-img" alt="${member.name}" onerror="this.onerror=null; this.src='${DEFAULT_IMAGE}';"><p class="ad-top-three-name">${member.name}</p><p class="ad-top-three-amount">${member.balance.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}</p></div>`).join(''); return `<div class="ad-content"><div class="ad-headline">🚀 Top 3 Wealth Creators 🚀</div><div class="ad-top-three-container">${topThreeHtml}</div></div>`; }); }
         if (adData.topSipMember) { ads.push(() => `<div class="ad-content"><div class="ad-headline">🏆 Member of the SIP Month 🏆</div><div class="ad-member-info"><img src="${adData.topSipMember.imageUrl}" class="ad-member-img" alt="${adData.topSipMember.name}" onerror="this.onerror=null; this.src='${DEFAULT_IMAGE}';"><div class="ad-member-details"><p class="ad-member-name">${adData.topSipMember.name}</p><p class="ad-member-amount">${adData.topSipMember.amount.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</p></div></div></div>`); }
         if (adData.topBalanceMember) { ads.push(() => `<div class="ad-content"><div class="ad-headline">✨ Our Top Community Member ✨</div><div class="ad-member-info"><img src="${adData.topBalanceMember.displayImageUrl}" class="ad-member-img" alt="${adData.topBalanceMember.name}" onerror="this.onerror=null; this.src='${DEFAULT_IMAGE}';"><div class="ad-member-details"><p class="ad-member-name">${adData.topBalanceMember.name}</p><p class="ad-member-amount">${adData.topBalanceMember.balance.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</p></div></div></div>`); }
         if (adData.bankStats) { ads.push(() => `<div class="ad-content"><div class="ad-bank-stats-container"><img src="${BANK_LOGO_URL}" alt="Bank Logo" class="ad-bank-logo"><ul class="ad-bank-stats"><li>Established: <strong>23 June 2024</strong></li><li>Total Members: <strong>${adData.bankStats.totalMembers}</strong></li><li>Loan Disbursed: <strong>${adData.bankStats.totalLoan.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</strong></li></ul></div></div>`); }
 
-        if (ads.length === 0) { headerDisplay.innerHTML = `<p>Welcome to Bank Community Loan!</p>`; return; }
+        if (ads.length === 0) { headerDisplay.innerHTML = `<div class="ad-content"><p class="ad-headline">Welcome to Bank Community Loan!</p></div>`; return; }
 
         let currentAdIndex = 0;
         const showNextAd = () => {
@@ -903,12 +919,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 headerDisplay.innerHTML = ads[currentAdIndex]();
                 const progressBar = document.createElement('div');
                 progressBar.className = 'ad-progress-bar';
-                headerDisplay.appendChild(progressBar);
+                // The progress bar is now appended to the ad-content itself to be inside the screen
+                const adContentDiv = headerDisplay.querySelector('.ad-content');
+                if(adContentDiv) adContentDiv.appendChild(progressBar);
+                
                 currentAdIndex = (currentAdIndex + 1) % ads.length;
             }
         };
         showNextAd();
-        setInterval(showNextAd, 5000); // Updated to 5 seconds
+        setInterval(showNextAd, 6000);
     }
 
     function initializeLetterSlider() {
@@ -935,10 +954,9 @@ document.addEventListener('DOMContentLoaded', () => {
         showSlide(0);
     }
     
-    // --- NEW FEATURE FUNCTIONS ---
     function buildInfoSlider() {
         if (!infoSlider) return;
-        infoSlider.innerHTML = ''; // Clear existing
+        infoSlider.innerHTML = '';
         const infoCards = [
             { icon: 'dollar-sign', title: 'Fund Deposit', text: 'Sabhi sadasya milkar fund jama karte hain <strong>(Every Month SIP)</strong> ke roop mein.' },
             { icon: 'gift', title: 'Loan Provision', text: 'Zarooratmand sadasya ko usi fund se <strong>loan</strong> diya jaata hai.' },
@@ -1007,7 +1025,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const txDate = new Date(tx.Date);
             txDate.setHours(0, 0, 0, 0);
             return txDate.getTime() === today.getTime() && (tx.SipPayment > 0 || tx.Loan > 0 || tx.Payment > 0);
-        }).sort((a,b) => b.Date - a.Date); // Sort by most recent first
+        }).sort((a,b) => b.Date - a.Date);
 
         if (todaysTransactions.length > 0 && !sessionStorage.getItem('notificationsViewed')) {
             notificationDot.style.display = 'block';
@@ -1056,38 +1074,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // --- PWA INSTALLATION LOGIC ---
     let deferredPrompt;
 
     function setupPwa() {
-        // 1. Register the Service Worker
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
                 .then((reg) => console.log('Service worker registered.', reg))
                 .catch((err) => console.error('Service worker not registered.', err));
         }
 
-        // 2. Listen for the install prompt
         window.addEventListener('beforeinstallprompt', (e) => {
-            // Prevent the mini-infobar from appearing on mobile
             e.preventDefault();
-            // Stash the event so it can be triggered later.
             deferredPrompt = e;
-            // Update UI to notify the user they can install the PWA
             if (installAppBtn) {
                 installAppBtn.style.display = 'inline-flex';
             }
             console.log(`'beforeinstallprompt' event was fired.`);
         });
 
-        // 3. Handle the install button click
         if (installAppBtn) {
             installAppBtn.addEventListener('click', (e) => {
-                // Hide the app provided install promotion
                 installAppBtn.style.display = 'none';
-                // Show the install prompt
                 deferredPrompt.prompt();
-                // Wait for the user to respond to the prompt
                 deferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
                         console.log('User accepted the A2HS prompt');
@@ -1112,7 +1120,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (closeSipStatusModalBtn) closeSipStatusModalBtn.addEventListener('click', () => closeModal(sipStatusModalElement));
         if (profileModalHeader) { profileModalHeader.addEventListener('click', () => { if (profileModalImage.src) { showFullImage(profileModalImage.src, profileModalName.textContent); } }); }
         
-        // Notification Listeners
         if(notificationBtn) notificationBtn.addEventListener('click', () => {
             displayNotifications();
             notificationModal.classList.add('show');
@@ -1139,7 +1146,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchMemberDataFromBackend();
     initializeLetterSlider();
     observeElements(document.querySelectorAll('.animate-on-scroll'));
-    setupPwa(); // Initialize PWA functionality
+    setupPwa();
 });
 </script>
 
