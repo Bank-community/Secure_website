@@ -251,15 +251,19 @@
         color: var(--text-color);
     }
     
-    /* NEW: Install Button Style */
-    #installAppBtn {
-        background: var(--success-color);
-        color: white;
-        display: none; /* Hidden by default, shown by JS */
-    }
-    #installAppBtn:hover {
-        background: #218838;
-    }
+    /* UPDATED: Install Button Style */
+#installAppBtn {
+    background: var(--success-color);
+    color: white;
+    display: none; /* Hidden by default, shown by JS */
+    font-weight: 700; /* BOLD TEXT - YEH LINE TEXT KO BOLD KARTI HAI */
+    border: 2px solid white; /* WHITE BORDER - YEH LINE BORDER LAGATI HAI */
+}
+#installAppBtn:hover {
+    background: #218838;
+    border-color: #eee;
+}
+
 
 
     .content-wrapper { max-width: 1140px; margin: 30px auto; padding: 0 20px; }
