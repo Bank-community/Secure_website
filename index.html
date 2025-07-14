@@ -4,15 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BANK</title>
-    <link rel="shortcut icon" href="https://i.postimg.cc/XNpR3cN1/20241030-065157.png" type="image/x-icon">
-    <link rel="apple-touch-icon" href="https://i.ibb.co/8F6snVv/20241030-065157.png" sizes="180x180">
+    
+    <!-- NEW: PWA Manifest and Theme Color -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#007bff">
+
+    <!-- UPDATED: New Logo for Favicon and Apple Touch Icon -->
+    <link rel="shortcut icon" href="https://i.ibb.co/QFyppct1/1000005314.jpg" type="image/x-icon">
+    <link rel="apple-touch-icon" href="https://i.ibb.co/QFyppct1/1000005314.jpg" sizes="180x180">
+    
     <!-- Feather Icons Script -->
     <script src="https://unpkg.com/feather-icons"></script>
     <!-- Chart.js for SIP Chart -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- Firebase SDKs are REMOVED -->
-
     <style>
     /* --- General Styles --- */
     :root {
@@ -245,6 +250,17 @@
         background-color: #ffcd39;
         color: var(--text-color);
     }
+    
+    /* NEW: Install Button Style */
+    #installAppBtn {
+        background: var(--success-color);
+        color: white;
+        display: none; /* Hidden by default, shown by JS */
+    }
+    #installAppBtn:hover {
+        background: #218838;
+    }
+
 
     .content-wrapper { max-width: 1140px; margin: 30px auto; padding: 0 20px; }
     section { margin-bottom: 40px; padding: 25px; background-color: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 15px var(--shadow-color); border: 1px solid var(--border-color); }
@@ -459,6 +475,10 @@
             <button class="civil-button" id="sipStatusBtn">SIP Status</button>
             <button class="notification-btn" id="notificationBtn">🔔<span id="notificationDot" class="notification-dot"></span></button>
         </div>
+        <!-- NEW: Install Button Added -->
+        <div class="header-actions-row">
+             <button class="civil-button" id="installAppBtn">Install App 📥</button>
+        </div>
     </div>
 </header>
 
@@ -589,7 +609,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const DEFAULT_IMAGE = 'https://i.imgur.com/6aATcZR.jpeg';
     const PRIME_MEMBERS = ["Prince rama", "Amit kumar", "Mithlesh sahni"];
-    const BANK_LOGO_URL = 'https://i.ibb.co/v4zt0f30/20241030-065157.png';
+    // UPDATED: New Bank Logo URL
+    const BANK_LOGO_URL = 'https://i.ibb.co/QFyppct1/1000005314.jpg';
 
     // DOM Elements
     const memberContainer = document.getElementById('memberContainer');
@@ -640,6 +661,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextSlideBtn = document.getElementById('nextSlideBtn');
     const playBtn = document.getElementById('playBtn');
     const audio = document.getElementById('welcomeAudio');
+    
+    // NEW: Install button element
+    const installAppBtn = document.getElementById('installAppBtn');
+
 
     // State Variables
     let allTransactions = [];
@@ -1029,6 +1054,51 @@ document.addEventListener('DOMContentLoaded', () => {
             notificationList.appendChild(li);
         });
     }
+    
+    // --- PWA INSTALLATION LOGIC ---
+    let deferredPrompt;
+
+    function setupPwa() {
+        // 1. Register the Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then((reg) => console.log('Service worker registered.', reg))
+                .catch((err) => console.error('Service worker not registered.', err));
+        }
+
+        // 2. Listen for the install prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            // Stash the event so it can be triggered later.
+            deferredPrompt = e;
+            // Update UI to notify the user they can install the PWA
+            if (installAppBtn) {
+                installAppBtn.style.display = 'inline-flex';
+            }
+            console.log(`'beforeinstallprompt' event was fired.`);
+        });
+
+        // 3. Handle the install button click
+        if (installAppBtn) {
+            installAppBtn.addEventListener('click', (e) => {
+                // Hide the app provided install promotion
+                installAppBtn.style.display = 'none';
+                // Show the install prompt
+                deferredPrompt.prompt();
+                // Wait for the user to respond to the prompt
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the A2HS prompt');
+                    } else {
+                        console.log('User dismissed the A2HS prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            });
+        }
+    }
+
 
     function setupEventListeners() {
         if (currentYearElement) currentYearElement.textContent = new Date().getFullYear();
@@ -1065,9 +1135,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Initial Calls ---
     feather.replace();
     setupEventListeners();
-    fetchMemberDataFromBackend(); // Changed from fetchMemberDataFromFirebase
+    fetchMemberDataFromBackend();
     initializeLetterSlider();
     observeElements(document.querySelectorAll('.animate-on-scroll'));
+    setupPwa(); // Initialize PWA functionality
 });
 </script>
 
