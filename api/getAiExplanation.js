@@ -11,7 +11,7 @@ export default async function handler(request, response) {
     // Get the Gemini API Key securely from Vercel Environment Variables.
     const geminiApiKey = process.env.GEMINI_API_KEY;
     
-    if (!geminiApiKey) {
+    if (!geminiApiKey || geminiApiKey === "YOUR_API_KEY_HERE") {
       throw new Error('Gemini API Key Vercel में सेट नहीं है।');
     }
 
@@ -51,7 +51,9 @@ export default async function handler(request, response) {
       // Send the successful response back to the frontend.
       return response.status(200).json({ explanation });
     } else {
-      throw new Error("AI se koi valid response nahi mila.");
+      // Handle cases where the response might be blocked or empty
+      const blockReason = data.candidates?.[0]?.finishReason || 'Unknown';
+      throw new Error(`AI se koi valid response nahi mila. Karan: ${blockReason}`);
     }
 
   } catch (error) {
@@ -59,3 +61,4 @@ export default async function handler(request, response) {
     response.status(500).json({ error: 'Server par AI request fail ho gayi.', details: error.message });
   }
 }
+
