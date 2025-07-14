@@ -4,12 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photo Gallery Pro</title>
-    
-    <!-- Google Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
         :root {
             --primary-color: #6a11cb;
@@ -26,80 +23,45 @@
             --border-radius: 16px;
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            background-color: var(--background-color);
-            color: var(--text-color);
-            font-family: var(--font-family);
-            padding: 10px;
-        }
-
-        .container {
-            max-width: 480px;
-            margin: 0 auto;
-            background: var(--card-bg-color);
-            border-radius: 24px;
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            min-height: calc(100vh - 20px);
-        }
-
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px 25px;
-            border-bottom: 1px solid var(--border-color);
-            position: relative;
-        }
-        
+        body { background-color: var(--background-color); color: var(--text-color); font-family: var(--font-family); padding: 10px; }
+        .container { max-width: 480px; margin: 0 auto; background: var(--card-bg-color); border-radius: 24px; box-shadow: var(--shadow); overflow: hidden; min-height: calc(100vh - 20px); }
+        .header { display: flex; align-items: center; justify-content: center; padding: 20px 25px; border-bottom: 1px solid var(--border-color); position: relative; }
         .header .title { font-size: 22px; font-weight: 600; color: var(--primary-color); }
         .section { padding: 25px; }
         .section-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .section-title h3 { font-size: 18px; font-weight: 600; }
         .view-all { color: var(--primary-color); font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.3s; }
         .view-all:hover { opacity: 0.8; }
-
         .name-grid { display: flex; gap: 15px; overflow-x: auto; padding: 5px 0 15px 0; -ms-overflow-style: none; scrollbar-width: none; }
         .name-grid::-webkit-scrollbar { display: none; }
-
         .name-item { text-align: center; flex-shrink: 0; cursor: pointer; }
         .name-avatar { width: 68px; height: 68px; border-radius: 50%; background-size: cover; background-position: center; border: 3px solid transparent; padding: 3px; background-clip: content-box; margin-bottom: 8px; transition: all 0.4s ease; }
         .name-item.active .name-avatar { border-color: var(--primary-color); transform: scale(1.1); }
         .name-label { font-size: 14px; font-weight: 500; color: var(--light-text-color); transition: color 0.3s; }
         .name-item.active .name-label { color: var(--primary-color); font-weight: 600; }
-
         .albums-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
         .album-card, .skeleton-card { border-radius: var(--border-radius); background-color: #eee; background-size: cover; background-position: center; cursor: pointer; position: relative; overflow: hidden; aspect-ratio: 1; transition: transform 0.3s ease, box-shadow 0.3s ease; display: flex; flex-direction: column; justify-content: flex-end; }
         .album-card:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0,0,0,0.12); }
         .album-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 12px; opacity: 1; transition: opacity 0.3s; }
         .album-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
-
         .like-button, .like-count { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(8px); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 6px 12px; font-size: 14px; cursor: pointer; transition: background 0.3s; display: flex; align-items: center; gap: 5px; font-weight: 500; }
         .like-button:hover { background: rgba(255, 255, 255, 0.3); }
         .like-button .heart-icon { width: 18px; height: 18px; fill: #ddd; transition: all 0.3s ease; }
         .like-button.liked .heart-icon { fill: var(--like-color); transform: scale(1.2); }
         .like-count { display: none; }
         .like-count.visible { display: flex; }
-
         .delete-btn { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; background-color: rgba(255, 255, 255, 0.8); border: none; border-radius: 50%; color: var(--danger-color); display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; transform: scale(0.8); transition: all 0.3s ease; z-index: 5; }
         .album-card:hover .delete-btn { opacity: 1; transform: scale(1); }
         .delete-btn:hover { background-color: white; transform: scale(1.1); }
-        
         .status-message { padding: 40px 15px; text-align: center; color: var(--light-text-color); font-size: 16px; grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .status-message .icon { font-size: 48px; color: #ccc; }
-
         .skeleton-card { background-color: #e0e0e0; animation: pulse 1.5s infinite ease-in-out; }
         @keyframes pulse { 0% { background-color: #e0e0e0; } 50% { background-color: #f0f0f0; } 100% { background-color: #e0e0e0; } }
-
-        .fab { position: fixed; bottom: 30px; right: calc(56% - 200px); width: 60px; height: 60px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; cursor: pointer; box-shadow: 0 8px 20px rgba(106, 17, 203, 0.3); transition: all 0.3s ease; border: none; z-index: 999; }
+        .fab { position: fixed; bottom: 30px; right: calc(50% - 210px); width: 60px; height: 60px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; cursor: pointer; box-shadow: 0 8px 20px rgba(106, 17, 203, 0.3); transition: all 0.3s ease; border: none; z-index: 999; }
         .fab:hover { transform: scale(1.1) rotate(90deg); }
-        
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; backdrop-filter: blur(5px); opacity: 0; transition: opacity 0.3s ease; }
         .modal.show { display: flex; opacity: 1; }
-
         .modal-content { background-color: var(--card-bg-color); padding: 30px; border-radius: var(--border-radius); width: 90%; max-width: 400px; text-align: center; transform: scale(0.95); transition: transform 0.3s ease; }
         .modal.show .modal-content { transform: scale(1); }
         .modal-content h3 { margin-bottom: 20px; font-size: 20px; font-weight: 600; }
@@ -107,18 +69,16 @@
         .file-input-label { display: block; padding: 15px; background: #f0f2f5; color: var(--text-color); border-radius: 12px; text-align: center; font-weight: 500; cursor: pointer; transition: background 0.3s ease; margin-bottom: 15px; border: 2px dashed var(--border-color); }
         .file-input-label:hover { background: #e9ecef; }
         .file-input { display: none; }
-        .modal-input, .modal-select { width: 100%; padding: 15px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 16px; margin-bottom: 20px; text-align: center; transition: box-shadow 0.3s; }
+        .modal-input, .modal-select { width: 100%; padding: 15px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 16px; margin-bottom: 20px; text-align: left; transition: box-shadow 0.3s; -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 1rem center; background-repeat: no-repeat; background-size: 1.5em; padding-right: 2.5rem; }
         .modal-input:focus, .modal-select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.15); }
         .modal-buttons { display: flex; gap: 10px; }
         .modal-btn { flex-grow: 1; padding: 15px; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 16px; transition: all 0.3s ease; }
         .modal-btn.primary { background: var(--primary-gradient); color: white; }
         .modal-btn.primary:disabled { background: #BDBDBD; cursor: not-allowed; }
         .modal-btn.secondary { background-color: #e9ecef; color: #555; }
-        
         #likeHistoryList { list-style: none; max-height: 200px; overflow-y: auto; margin-top: 15px; text-align: left; padding: 0 10px; }
         #likeHistoryList li { padding: 10px 15px; border-bottom: 1px solid var(--border-color); font-size: 16px; }
         #likeHistoryList li:last-child { border-bottom: none; }
-
         #lightboxModal { background-color: rgba(0,0,0,0.85); }
         .lightbox-content { position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .lightbox-image { max-width: 90vw; max-height: 75vh; border-radius: 10px; object-fit: contain; }
@@ -131,7 +91,6 @@
         .lightbox-actions { position: absolute; bottom: 70px; display: flex; align-items: center; gap: 20px; padding: 10px 20px; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border-radius: 50px; }
         .lightbox-actions .person-name { color: white; font-weight: 500; }
         .lightbox-actions .like-button { font-size: 16px; padding: 8px 16px; }
-
         .toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); padding: 12px 25px; border-radius: 10px; color: white; font-weight: 500; transition: all 0.5s ease; z-index: 2000; opacity: 0; box-shadow: 0 5px 15px rgba(0,0,0,0.2);}
         .toast.show { bottom: 80px; opacity: 1;}
         .toast.success { background: var(--success-color); }
@@ -139,7 +98,6 @@
     </style>
 </head>
 <body>
-    <!-- Heart SVG for reuse -->
     <svg width="0" height="0" style="display:none;">
       <symbol id="heart-icon" viewBox="0 0 24 24">
         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
@@ -177,7 +135,10 @@
             <img id="previewImage" class="preview-image">
             <input type="file" id="fileInput" class="file-input" accept="image/*">
             <label for="fileInput" id="fileLabel" class="file-input-label">Image File Chunein</label>
-            <input type="text" id="personName" class="modal-input" placeholder="Vyakti ka naam darj karein">
+            <!-- UPDATED: Text input replaced with a dropdown -->
+            <select id="personNameSelect" class="modal-select">
+                <option value="">Select Name</option>
+            </select>
             <div class="modal-buttons">
                 <button class="modal-btn secondary" onclick="closeUploadModal()">Cancel</button>
                 <button class="modal-btn primary" id="uploadBtn" disabled>Upload</button>
@@ -200,7 +161,6 @@
         <div class="modal-content">
             <h3>Photo Like Karein</h3>
             <p style="margin-bottom: 15px; color: var(--light-text-color);">Photo like karne ke liye apna naam chunein.</p>
-            <!-- UPDATED: Text input replaced with a select dropdown -->
             <select id="likerNameSelect" class="modal-select">
                 <option value="">Select Your Name</option>
             </select>
@@ -266,12 +226,12 @@
     const openUploadModalBtn = getEl('openUploadModalBtn');
     const fileInput = getEl('fileInput');
     const fileLabel = getEl('fileLabel');
-    const personNameInput = getEl('personName');
+    const personNameSelect = getEl('personNameSelect'); // UPDATED
     const previewImage = getEl('previewImage');
     const uploadBtn = getEl('uploadBtn');
     const passwordModalTitle = getEl('passwordModalTitle');
     const passwordInput = getEl('passwordInput');
-    const likerNameSelect = getEl('likerNameSelect'); // UPDATED
+    const likerNameSelect = getEl('likerNameSelect');
     const submitLikeBtn = getEl('submitLikeBtn');
     const likeHistoryList = getEl('likeHistoryList');
     const lightboxImage = getEl('lightboxImage');
@@ -303,8 +263,13 @@
     const openUploadModal = () => openModal(uploadModal);
     const closeUploadModal = () => { closeModal(uploadModal); resetUploadForm(); };
     const resetUploadForm = () => {
-        fileInput.value = ''; personNameInput.value = ''; previewImage.style.display = 'none';
-        previewImage.src = ''; state.selectedFile = null; fileLabel.textContent = 'Image File Chunein'; uploadBtn.disabled = true;
+        fileInput.value = ''; 
+        personNameSelect.value = ''; // UPDATED
+        previewImage.style.display = 'none';
+        previewImage.src = ''; 
+        state.selectedFile = null; 
+        fileLabel.textContent = 'Image File Chunein'; 
+        uploadBtn.disabled = true;
     };
     
     const openPasswordModal = () => { openModal(passwordModal); passwordInput.focus(); };
@@ -355,17 +320,16 @@
             const result = await imgbbResponse.json();
 
             if (result.success) {
-                // Now, save metadata to our backend
                 const backendResponse = await fetch('/api/gallery', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ personName: personNameInput.value.trim(), url: result.data.url })
+                    body: JSON.stringify({ personName: personNameSelect.value, url: result.data.url })
                 });
                 if (!backendResponse.ok) throw new Error('Backend par image save karne mein vifal.');
                 
                 showToast('Photo safaltapoorvak upload ho gaya!', 'success');
                 closeUploadModal();
-                fetchInitialData(); // Refresh data
+                fetchInitialData();
             } else { throw new Error(result.error?.message || 'ImgBB upload vifal'); }
         } catch (error) { showToast(`Upload vifal: ${error.message}`, 'error'); }
     };
@@ -390,7 +354,7 @@
             });
             if (!response.ok) throw new Error('Delete karne mein vifal.');
             showToast('Photo safaltapoorvak delete ho gaya.', 'success');
-            fetchInitialData(); // Refresh data
+            fetchInitialData();
         } catch (error) { showToast(`Delete karne mein vifal: ${error.message}`, 'error'); }
     };
 
@@ -413,7 +377,7 @@
             });
             if (!response.ok) throw new Error('Like status update nahi kar sake.');
             showToast(isUnlike ? 'Photo se like hataya.' : 'Photo pasand kiya!', 'success');
-            fetchInitialData(); // Refresh data to show updated likes
+            fetchInitialData();
         } catch (error) { showToast(error.message, 'error'); }
     };
 
@@ -433,7 +397,6 @@
     const fetchInitialData = async () => {
         showSkeletonLoader();
         try {
-            // Fetch both gallery images and member list in parallel
             const [galleryRes, membersRes] = await Promise.all([
                 fetch('/api/gallery'),
                 fetch('/api/getMembers')
@@ -445,20 +408,21 @@
             state.allImages = await galleryRes.json();
             const membersData = (await membersRes.json()).transactions;
 
-            // Process and store unique member names
             const memberNames = [...new Set(membersData.map(tx => tx.Name.trim()))].sort();
             state.allMembers = memberNames;
             
-            // Populate the "like" dropdown
-            likerNameSelect.innerHTML = '<option value="">Apna Naam Chunein</option>';
-            state.allMembers.forEach(name => {
-                const option = document.createElement('option');
-                option.value = name;
-                option.textContent = name;
-                likerNameSelect.appendChild(option);
+            // Populate both dropdowns
+            const allDropdowns = [personNameSelect, likerNameSelect];
+            allDropdowns.forEach(dropdown => {
+                dropdown.innerHTML = `<option value="">Select Name</option><option value="Bank">Bank</option>`; // Add Bank option
+                state.allMembers.forEach(name => {
+                    const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = name;
+                    dropdown.appendChild(option);
+                });
             });
 
-            // Display everything
             displayNames();
             displayPhotos();
         } catch (error) {
@@ -478,6 +442,12 @@
         if (namesMap.size === 0) return;
 
         const sortedNames = Array.from(namesMap.keys()).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+        
+        // Add "Bank" to the top if it has photos
+        if (namesMap.has("Bank")) {
+            sortedNames.unshift(sortedNames.splice(sortedNames.indexOf("Bank"), 1)[0]);
+        }
+
         sortedNames.forEach(name => {
             const nameDiv = document.createElement('div');
             nameDiv.className = 'name-item';
@@ -613,11 +583,11 @@
             fileLabel.textContent = `✅ ${fileName}`;
             previewImage.src = URL.createObjectURL(file);
             previewImage.style.display = 'block';
-            uploadBtn.disabled = personNameInput.value.trim() === '';
+            uploadBtn.disabled = personNameSelect.value.trim() === '';
         }
     });
-    personNameInput.addEventListener('input', () => {
-         uploadBtn.disabled = !(state.selectedFile && personNameInput.value.trim() !== '');
+    personNameSelect.addEventListener('input', () => { // UPDATED
+         uploadBtn.disabled = !(state.selectedFile && personNameSelect.value.trim() !== '');
     });
     uploadBtn.addEventListener('click', () => {
         if (!uploadBtn.disabled) {
