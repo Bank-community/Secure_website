@@ -46,11 +46,11 @@ export default async function handler(request, response) {
 
     const sortedTransactions = transactions.sort((a, b) => new Date(a.Date) - new Date(b.Date) || a.id - b.id);
 
-    // --- THIS IS THE FIX ---
+    // --- THE FIX ---
     // We are now also sending the ACCESS_PIN from Vercel's environment variables.
     response.status(200).json({ 
         transactions: sortedTransactions,
-        accessPin: process.env.ACCESS_PIN // <-- YEH NAYI LINE JODI GAYI HAI
+        accessPin: process.env.ACCESS_PIN // <-- This line sends the PIN
     });
 
   } catch (error) {
