@@ -19,7 +19,7 @@
     :root {
         --primary-color: #007bff;
         --primary-darker: #0056b3;
-        --secondary-color: #25D366; /* WhatsApp Green */
+        --secondary-color: #25D366;
         --secondary-darker: #128C7E;
         --text-color: #333;
         --light-text: #555;
@@ -27,7 +27,7 @@
         --card-bg: #ffffff;
         --border-color: #dee2e6;
         --shadow-color: rgba(0, 0, 0, 0.08);
-        --prime-color: #ffc107; /* Prime Gold */
+        --prime-color: #ffc107;
         --danger-color: #dc3545;
         --success-color: #28a745;
         --info-color: #17a2b8;
@@ -76,50 +76,54 @@
     a:hover { color: var(--primary-darker); text-decoration: none; }
     img { max-width: 100%; height: auto; display: block; }
 
-    /* --- Header --- */
+    /* --- UPDATED: Sticky Display Container --- */
+    .sticky-display-container {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-darker));
+        padding: 20px 0 15px 0;
+    }
+
+    /* --- Header (Scrollable Part) --- */
     header {
         background: linear-gradient(135deg, var(--primary-color), var(--primary-darker));
         color: white;
-        padding: 20px 0;
+        padding: 10px 0 20px 0; /* Adjusted padding */
         text-align: center;
         border-bottom: 5px solid var(--prime-color);
     }
 
-    /* --- NEW REALISTIC DISPLAY STYLES --- */
     .header-display {
         width: 100%;
         max-width: 500px;
-        height: 180px; /* Fixed height as requested */
-        margin: 0 auto 15px auto;
-        padding: 12px; /* Bezel thickness */
+        height: 180px;
+        margin: 0 auto;
+        padding: 12px;
         box-sizing: border-box;
-        border-radius: 20px; /* Outer roundness */
+        border-radius: 20px;
         background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(0, 0, 0, 0.6);
         position: relative;
     }
     
-    /* The ad content will act as the screen */
-    /* Yeh code bhi zaroor update karein */
-.ad-content {
-    background-color: #000;
-    border-radius: 10px;
-    width: 100%;
-    height: 100%;
-    position: relative;
-    overflow: hidden;
-    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.75);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly; /* UPDATED: Isse vertical alignment theek hoga */
-    padding: 10px;
-    box-sizing: border-box;
-    animation: fadeIn 0.8s ease-in-out;
-}
-
+    .ad-content {
+        background-color: #000;
+        border-radius: 10px;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.75);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-evenly;
+        padding: 10px;
+        box-sizing: border-box;
+        animation: fadeIn 0.8s ease-in-out;
+    }
     
-    /* Scan Lines Effect */
     .ad-content::before {
         content: "";
         position: absolute;
@@ -130,7 +134,6 @@
         pointer-events: none;
     }
 
-    /* Glare Effect */
     .ad-content::after {
         content: '';
         position: absolute;
@@ -138,7 +141,7 @@
         background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.12), transparent 70%);
         border-radius: 10px;
         pointer-events: none;
-        z-index: 3; /* Above content and scan lines */
+        z-index: 3;
     }
     
     @keyframes fadeIn {
@@ -146,12 +149,11 @@
         to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Text color changes for dark background */
     .ad-headline {
         font-size: 1em;
         font-weight: 600;
-        color: #e5e5e5; /* Light color */
-        margin-bottom: 5px; /* UPDATED: Margin kam kiya gaya */
+        color: #e5e5e5;
+        margin-bottom: 5px;
         z-index: 2;
         position: relative;
     }
@@ -179,24 +181,23 @@
     .ad-top-three-member { text-align: center; flex: 1; }
     .ad-top-three-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; margin: 0 auto 5px; border: 2px solid #4b5563; }
     
-    /* UPDATED: Name aur Amount ke beech ka space theek kiya gaya */
     .ad-top-three-name { 
         font-size: 0.85em; 
         font-weight: 600; 
         line-height: 1.2; 
         color: #d1d5db; 
-        margin: 0 0 4px 0; /* Default margin hatakar naya margin diya gaya */
+        margin: 0 0 4px 0;
     }
     .ad-top-three-amount { 
         font-size: 0.8em; 
         color: #34d399; 
-        margin: 0; /* Default margin hataya gaya */
+        margin: 0;
     }
 
     .ad-bank-logo { width: 70px; height: 70px; }
     .ad-bank-stats { list-style: none; padding: 0; margin: 0; text-align: left; }
     .ad-bank-stats li { font-size: 1em; font-weight: 500; margin-bottom: 5px; color: #d1d5db;}
-    .ad-bank-stats li strong { color: #93c5fd; } /* Light blue for highlight */
+    .ad-bank-stats li strong { color: #93c5fd; }
 
     .ad-progress-bar {
         position: absolute;
@@ -205,15 +206,14 @@
         height: 4px;
         background: var(--danger-color);
         width: 0;
-        border-radius: 0 0 10px 10px; /* Match inner screen radius */
+        border-radius: 0 0 10px 10px;
         animation: progress-anim 6s linear forwards;
-        z-index: 4; /* On top of everything */
+        z-index: 4;
     }
     @keyframes progress-anim {
         from { width: 0%; }
         to { width: 100%; }
     }
-    /* --- END OF NEW DISPLAY STYLES --- */
 
     header h1 {
         color: white;
@@ -503,10 +503,15 @@
 </head>
 <body>
 
-<header class="animate-on-scroll">
+<!-- UPDATED: Display is now in its own sticky container -->
+<div class="sticky-display-container animate-on-scroll">
     <div id="headerDisplay" class="header-display">
         <!-- Dynamic content will be injected here by JavaScript -->
     </div>
+</div>
+
+<header class="animate-on-scroll">
+    <!-- Display has been moved out -->
     <h1>Bank Community Loan</h1>
     <h4>ESTD: 23 June 2024</h4>
     <div class="header-actions">
@@ -933,13 +938,15 @@ document.addEventListener('DOMContentLoaded', () => {
         let currentAdIndex = 0;
         const showNextAd = () => {
             if(ads.length > 0) {
-                headerDisplay.innerHTML = ads[currentAdIndex]();
-                const progressBar = document.createElement('div');
-                progressBar.className = 'ad-progress-bar';
-                // The progress bar is now appended to the ad-content itself to be inside the screen
-                const adContentDiv = headerDisplay.querySelector('.ad-content');
-                if(adContentDiv) adContentDiv.appendChild(progressBar);
-                
+                // This logic needs to target the display inside the sticky container
+                const displayElement = document.querySelector('.sticky-display-container .header-display');
+                if (displayElement) {
+                    displayElement.innerHTML = ads[currentAdIndex]();
+                    const progressBar = document.createElement('div');
+                    progressBar.className = 'ad-progress-bar';
+                    const adContentDiv = displayElement.querySelector('.ad-content');
+                    if(adContentDiv) adContentDiv.appendChild(progressBar);
+                }
                 currentAdIndex = (currentAdIndex + 1) % ads.length;
             }
         };
