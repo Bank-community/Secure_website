@@ -122,7 +122,11 @@
         animation: fadeIn 0.8s ease-in-out;
     }
     
-    
+    /* Static scan lines */
+    .ad-content::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
         background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.04) 2px, rgba(255, 255, 255, 0.04) 4px); /* UPDATED: More visible */
         opacity: 0.6;
         z-index: 1;
@@ -140,17 +144,7 @@
         z-index: 3;
     }
     
-    /* NEW: Animated Scan Line */
-    .scan-line-anim {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: linear-gradient(to bottom, rgba(13, 187, 247, 0.3), transparent);
-        animation: scan 5s linear infinite;
-        z-index: 2;
-    }
+    
 
     @keyframes scan {
         0% { transform: translateY(-20px); }
