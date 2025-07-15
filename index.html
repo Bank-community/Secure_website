@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BANK</title>
     
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#007bff">
-
+    <!-- PWA related links REMOVED to fix security warning -->
+    
     <link rel="shortcut icon" href="https://i.ibb.co/0Vnz4qPn/20250714-183208.png" type="image/x-icon">
     <link rel="apple-touch-icon" href="https://i.ibb.co/6c5yJVhN/20250714-174036.png" sizes="180x180">
     
@@ -99,27 +98,23 @@
         position: relative;
     }
     
-    /* The ad content will act as the screen */
-    /* Yeh code bhi zaroor update karein */
-.ad-content {
-    background-color: #000;
-    border-radius: 10px;
-    width: 100%;
-    height: 100%;
-    position: relative;
-    overflow: hidden;
-    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.75);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly; /* UPDATED: Isse vertical alignment theek hoga */
-    padding: 10px;
-    box-sizing: border-box;
-    animation: fadeIn 0.8s ease-in-out;
-}
-
+    .ad-content {
+        background-color: #000;
+        border-radius: 10px;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.75);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-evenly;
+        padding: 10px;
+        box-sizing: border-box;
+        animation: fadeIn 0.8s ease-in-out;
+    }
     
-    /* Scan Lines Effect */
     .ad-content::before {
         content: "";
         position: absolute;
@@ -130,7 +125,6 @@
         pointer-events: none;
     }
 
-    /* Glare Effect */
     .ad-content::after {
         content: '';
         position: absolute;
@@ -138,7 +132,7 @@
         background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.12), transparent 70%);
         border-radius: 10px;
         pointer-events: none;
-        z-index: 3; /* Above content and scan lines */
+        z-index: 3;
     }
     
     @keyframes fadeIn {
@@ -146,12 +140,11 @@
         to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Text color changes for dark background */
     .ad-headline {
         font-size: 1em;
         font-weight: 600;
-        color: #e5e5e5; /* Light color */
-        margin-bottom: 5px; /* UPDATED: Margin kam kiya gaya */
+        color: #e5e5e5;
+        margin-bottom: 5px;
         z-index: 2;
         position: relative;
     }
@@ -179,24 +172,13 @@
     .ad-top-three-member { text-align: center; flex: 1; }
     .ad-top-three-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; margin: 0 auto 5px; border: 2px solid #4b5563; }
     
-    /* UPDATED: Name aur Amount ke beech ka space theek kiya gaya */
-    .ad-top-three-name { 
-        font-size: 0.85em; 
-        font-weight: 600; 
-        line-height: 1.2; 
-        color: #d1d5db; 
-        margin: 0 0 4px 0; /* Default margin hatakar naya margin diya gaya */
-    }
-    .ad-top-three-amount { 
-        font-size: 0.8em; 
-        color: #34d399; 
-        margin: 0; /* Default margin hataya gaya */
-    }
+    .ad-top-three-name { font-size: 0.85em; font-weight: 600; line-height: 1.2; color: #d1d5db; margin: 0 0 4px 0; }
+    .ad-top-three-amount { font-size: 0.8em; color: #34d399; margin: 0; }
 
     .ad-bank-logo { width: 70px; height: 70px; }
     .ad-bank-stats { list-style: none; padding: 0; margin: 0; text-align: left; }
     .ad-bank-stats li { font-size: 1em; font-weight: 500; margin-bottom: 5px; color: #d1d5db;}
-    .ad-bank-stats li strong { color: #93c5fd; } /* Light blue for highlight */
+    .ad-bank-stats li strong { color: #93c5fd; }
 
     .ad-progress-bar {
         position: absolute;
@@ -205,16 +187,15 @@
         height: 4px;
         background: var(--danger-color);
         width: 0;
-        border-radius: 0 0 10px 10px; /* Match inner screen radius */
+        border-radius: 0 0 10px 10px;
         animation: progress-anim 6s linear forwards;
-        z-index: 4; /* On top of everything */
+        z-index: 4;
     }
     @keyframes progress-anim {
         from { width: 0%; }
         to { width: 100%; }
     }
-    /* --- END OF NEW DISPLAY STYLES --- */
-
+    
     header h1 {
         color: white;
         font-size: 2.2em;
@@ -300,12 +281,7 @@
     }
     
     #installAppBtn {
-        background: var(--success-color);
-        color: white;
-        display: none;
-        max-width: 170px;
-        font-weight: 700;
-        border: 2px solid white;
+        display: none; /* PWA feature removed */
     }
 
     .content-wrapper { max-width: 1140px; margin: 30px auto; padding: 0 20px; }
@@ -936,7 +912,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 headerDisplay.innerHTML = ads[currentAdIndex]();
                 const progressBar = document.createElement('div');
                 progressBar.className = 'ad-progress-bar';
-                // The progress bar is now appended to the ad-content itself to be inside the screen
                 const adContentDiv = headerDisplay.querySelector('.ad-content');
                 if(adContentDiv) adContentDiv.appendChild(progressBar);
                 
@@ -1090,41 +1065,6 @@ document.addEventListener('DOMContentLoaded', () => {
             notificationList.appendChild(li);
         });
     }
-    
-    let deferredPrompt;
-
-    function setupPwa() {
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-                .then((reg) => console.log('Service worker registered.', reg))
-                .catch((err) => console.error('Service worker not registered.', err));
-        }
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            if (installAppBtn) {
-                installAppBtn.style.display = 'inline-flex';
-            }
-            console.log(`'beforeinstallprompt' event was fired.`);
-        });
-
-        if (installAppBtn) {
-            installAppBtn.addEventListener('click', (e) => {
-                installAppBtn.style.display = 'none';
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('User accepted the A2HS prompt');
-                    } else {
-                        console.log('User dismissed the A2HS prompt');
-                    }
-                    deferredPrompt = null;
-                });
-            });
-        }
-    }
-
 
     function setupEventListeners() {
         if (currentYearElement) currentYearElement.textContent = new Date().getFullYear();
@@ -1163,7 +1103,6 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchMemberDataFromBackend();
     initializeLetterSlider();
     observeElements(document.querySelectorAll('.animate-on-scroll'));
-    setupPwa();
 });
 </script>
 
