@@ -13,8 +13,6 @@
     
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- NEW: Tone.js for sound effects -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     
     <style>
     /* --- General Styles --- */
@@ -121,6 +119,7 @@
         justify-content: space-evenly;
         padding: 10px;
         box-sizing: border-box;
+        /* REMOVED: animation property */
     }
     
     .ad-content::before {
@@ -713,52 +712,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let todaysTransactions = [];
     let sipChartInstance = null;
     
-    // --- NEW: Sound Effect Logic ---
-    let isAudioReady = false;
-    let notificationSound, coinSound;
-
-    function initAudio() {
-        if (isAudioReady) return;
-        
-        Tone.start(); // Start audio context on user interaction
-        
-        // Notification sound
-        notificationSound = new Tone.Synth({
-            oscillator: { type: 'sine' },
-            envelope: { attack: 0.005, decay: 0.1, sustain: 0.3, release: 1 }
-        }).toDestination();
-
-        // Coin sound
-        coinSound = new Tone.MetalSynth({
-            frequency: 200,
-            envelope: { attack: 0.001, decay: 0.1, release: 0.1 },
-            harmonicity: 5.1,
-            modulationIndex: 32,
-            resonance: 4000,
-            octaves: 1.5
-        }).toDestination();
-        
-        isAudioReady = true;
-        console.log("Audio context ready.");
-    }
-
-    function playNotificationSound() {
-        if (!isAudioReady) return;
-        // Play a simple C5 note
-        notificationSound.triggerAttackRelease("C5", "8n", Tone.now());
-    }
-
-    function playCoinSound() {
-        if (!isAudioReady) return;
-        const now = Tone.now();
-        // Play a quick sequence of notes to simulate coins
-        coinSound.triggerAttackRelease("C4", "8n", now);
-        coinSound.triggerAttackRelease("E4", "8n", now + 0.1);
-        coinSound.triggerAttackRelease("G4", "8n", now + 0.2);
-    }
-    // --- End of Sound Effect Logic ---
-
-
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         if (isNaN(date.getTime())) return "N/A";
@@ -966,10 +919,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!headerDisplay) return;
         const ads = [];
  
-        if (adData.topThreeMembers.length >= 3) { ads.push({ type: 'top3', html: () => { let topThreeHtml = adData.topThreeMembers.map(member => `<div class="ad-top-three-member"><img src="${member.displayImageUrl}" class="ad-top-three-img" alt="${member.name}" onerror="this.onerror=null; this.src='${DEFAULT_IMAGE}';"><p class="ad-top-three-name">${member.name}</p><p class="ad-top-three-amount">${member.balance.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}</p></div>`).join(''); return `<div class="ad-content"><div class="ad-headline">🚀 Top 3 Wealth Creators 🚀</div><div class="ad-top-three-container">${topThreeHtml}</div></div>`; }}); }
-        if (adData.topSipMember) { ads.push({ type: 'sip', html: () => { playCoinSound(); return `<div class="ad-content"><div class="ad-headline">🏆 Member of the SIP Month 🏆</div><div class="ad-member-info"><img src="${adData.topSipMember.imageUrl}" class="ad-member-img" alt="${adData.topSipMember.name}" onerror="this.onerror=null; this.src='${DEFAULT_IMAGE}';"><div class="ad-member-details"><p class="ad-member-name">${adData.topSipMember.name}</p><p class="ad-member-amount">${adData.topSipMember.amount.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</p></div></div></div>`; }}); }
-        if (adData.topBalanceMember) { ads.push({ type: 'top1', html: () => `<div class="ad-content"><div class="ad-headline">✨ Our Top Community Member ✨</div><div class="ad-member-info"><img src="${adData.topBalanceMember.displayImageUrl}" class="ad-member-img" alt="${adData.topBalanceMember.name}" onerror="this.onerror=null; this.src='${DEFAULT_IMAGE}';"><div class="ad-member-details"><p class="ad-member-name">${adData.topBalanceMember.name}</p><p class="ad-member-amount">${adData.topBalanceMember.balance.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</p></div></div></div>`; }}); }
-        if (adData.bankStats) { ads.push({ type: 'stats', html: () => `<div class="ad-content"><div class="ad-bank-stats-container"><img src="${BANK_LOGO_URL}" alt="Bank Logo" class="ad-bank-logo"><ul class="ad-bank-stats"><li>Established: <strong>23 June 2024</strong></li><li>Total Members: <strong>${adData.bankStats.totalMembers}</strong></li><li>Loan Disbursed: <strong>${adData.bankStats.totalLoan.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</strong></li></ul></div></div>`; }}); }
+        if (adData.topThreeMembers.length >= 3) { ads.push(() => { let topThreeHtml = adData.topThreeMembers.map(member => `<div class="ad-top-three-member"><img src="${member.displayImageUrl}" class="ad-top-three-img" alt="${member.name}" onerror="this.onerror=null; this.src='${DEFAULT_IMAGE}';"><p class="ad-top-three-name">${member.name}</p><p class="ad-top-three-amount">${member.balance.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}</p></div>`).join(''); return `<div class="ad-content"><div class="ad-headline">🚀 Top 3 Wealth Creators 🚀</div><div class="ad-top-three-container">${topThreeHtml}</div></div>`; }); }
+        if (adData.topSipMember) { ads.push(() => `<div class="ad-content"><div class="ad-headline">🏆 Member of the SIP Month 🏆</div><div class="ad-member-info"><img src="${adData.topSipMember.imageUrl}" class="ad-member-img" alt="${adData.topSipMember.name}" onerror="this.onerror=null; this.src='${DEFAULT_IMAGE}';"><div class="ad-member-details"><p class="ad-member-name">${adData.topSipMember.name}</p><p class="ad-member-amount">${adData.topSipMember.amount.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</p></div></div></div>`); }
+        if (adData.topBalanceMember) { ads.push(() => `<div class="ad-content"><div class="ad-headline">✨ Our Top Community Member ✨</div><div class="ad-member-info"><img src="${adData.topBalanceMember.displayImageUrl}" class="ad-member-img" alt="${adData.topBalanceMember.name}" onerror="this.onerror=null; this.src='${DEFAULT_IMAGE}';"><div class="ad-member-details"><p class="ad-member-name">${adData.topBalanceMember.name}</p><p class="ad-member-amount">${adData.topBalanceMember.balance.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</p></div></div></div>`); }
+        if (adData.bankStats) { ads.push(() => `<div class="ad-content"><div class="ad-bank-stats-container"><img src="${BANK_LOGO_URL}" alt="Bank Logo" class="ad-bank-logo"><ul class="ad-bank-stats"><li>Established: <strong>23 June 2024</strong></li><li>Total Members: <strong>${adData.bankStats.totalMembers}</strong></li><li>Loan Disbursed: <strong>${adData.bankStats.totalLoan.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</strong></li></ul></div></div>`); }
 
         if (ads.length === 0) { headerDisplay.innerHTML = `<div class="ad-content"><p class="ad-headline">Welcome to Bank Community Loan!</p></div>`; return; }
 
@@ -978,8 +931,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if(ads.length > 0) {
                 const displayElement = document.querySelector('.sticky-display-container .header-display');
                 if (displayElement) {
-                    const adObject = ads[currentAdIndex];
-                    displayElement.innerHTML = adObject.html();
+                    displayElement.innerHTML = ads[currentAdIndex]();
                     const progressBar = document.createElement('div');
                     progressBar.className = 'ad-progress-bar';
                     const adContentDiv = displayElement.querySelector('.ad-content');
@@ -1091,7 +1043,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (todaysTransactions.length > 0 && !sessionStorage.getItem('notificationsViewed')) {
             notificationDot.style.display = 'block';
-            playNotificationSound(); // Play sound for new notifications
         }
     }
     
@@ -1174,26 +1125,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setupEventListeners() {
         if (currentYearElement) currentYearElement.textContent = new Date().getFullYear();
-        if (playBtn && audio) playBtn.addEventListener('click', () => {
-            initAudio(); // Initialize audio on first click
-            audio.play();
-        });
-        if (viewBalanceBtn) viewBalanceBtn.addEventListener('click', () => {
-             initAudio(); // Initialize audio on first click
-             showBalanceModal();
-        });
+        if (playBtn && audio) playBtn.addEventListener('click', () => audio.play());
+        if (viewBalanceBtn) viewBalanceBtn.addEventListener('click', showBalanceModal);
         if (closeBalanceModalBtn) closeBalanceModalBtn.addEventListener('click', () => closeModal(balanceModalElement));
         if (closeProfileModalBtn) closeProfileModalBtn.addEventListener('click', () => closeModal(profileModalElement));
         if (closeImageModalBtn) closeImageModalBtn.addEventListener('click', () => closeModal(imageModalElement));
-        if (sipStatusBtn) sipStatusBtn.addEventListener('click', () => {
-            initAudio(); // Initialize audio on first click
-            showSipStatusModal();
-        });
+        if (sipStatusBtn) sipStatusBtn.addEventListener('click', showSipStatusModal);
         if (closeSipStatusModalBtn) closeSipStatusModalBtn.addEventListener('click', () => closeModal(sipStatusModalElement));
         if (profileModalHeader) { profileModalHeader.addEventListener('click', () => { if (profileModalImage.src) { showFullImage(profileModalImage.src, profileModalName.textContent); } }); }
         
         if(notificationBtn) notificationBtn.addEventListener('click', () => {
-            initAudio(); // Initialize audio on first click
             displayNotifications();
             notificationModal.classList.add('show');
             notificationDot.style.display = 'none';
